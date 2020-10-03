@@ -213,9 +213,9 @@ int main(int _argc, char* _argv[]) {
                 fprintf(fileOutputSource, "\n\t\t");
             }
         }
-        if (filename_input_count > 0) {
-            fprintf(fileOutputSource, "\t\t&_includedFile%03.3d[0]\n", j);
-        }
+    }
+    if (filename_input_count > 0) {
+        fprintf(fileOutputSource, "\t\t&_includedFile%03.3d[0]\n", j);
     }
 
     fprintf(fileOutputSource, "\t};\n\n");
