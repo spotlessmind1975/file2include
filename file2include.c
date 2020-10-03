@@ -182,6 +182,7 @@ int main(int _argc, char* _argv[]) {
         }
 
         fprintf(fileOutputSource, "\tunsigned char _includedFile%03.3d[%d] = {\n\t\t", i, size );
+        j = 0;
         if (size > 1) {
             for (j = 0; j < (size - 1); ++j) {
                 fprintf(fileOutputSource, "0x%2.2x, ", content[j]);
@@ -190,9 +191,7 @@ int main(int _argc, char* _argv[]) {
                 }
             }
         }
-        if (size > 0) {
-            fprintf(fileOutputSource, "0x%02.2x", content[0]);
-        }
+        fprintf(fileOutputSource, "0x%02.2x", content[j]);
         fprintf(fileOutputSource, "\t};\n\n");
 
         fprintf(fileOutputInclude, "\t#define FILE_%s\t%d\n", filenameMangled, i);
@@ -202,6 +201,23 @@ int main(int _argc, char* _argv[]) {
 
         fclose(fileInput);
     }
+
+    fprintf(fileOutputSource, "\tunsigned char * _includedFiles[%d] = {\n", filename_input_count);
+
+    fprintf(fileOutputSource, "\t\t&_includedFile%03.3d[0],", i);
+    if (filename_input_count > 1) {
+        for (j = 0; j < (filename_input_count - 1); ++j) {
+            fprintf(fileOutputSource, "\t\t&_includedFile%03.3d[0],", j);
+            if (((j + 1) % 8) == 0) {
+                fprintf(fileOutputSource, "\n\t\t");
+            }
+        }
+        fprintf(fileOutputSource, "\t\t&_includedFile%03.3d[0]", j);
+    }
+
+    fprintf(fileOutputSource, "\t};\n\n");
+
+    fprintf(fileOutputInclude, "\textern unsigned char * _includedFiles[%d];\n", filename_input_count);
 
     fprintf(fileOutputInclude, "#endif\n");
 
