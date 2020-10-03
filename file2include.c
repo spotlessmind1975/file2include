@@ -98,6 +98,16 @@ void parse_options(int _argc, char* _argv[]) {
 
 }
 
+// Extract the basename part of a complete file path
+
+char* basename(char* _path) {
+    char* base = strrchr(_path, '/');
+    if (base == NULL) {
+        base = strrchr(_path, '\\');
+    }
+    return base ? base + 1 : _path;
+}
+
 // Main function
 int main(int _argc, char* _argv[]) {
 
@@ -149,12 +159,14 @@ int main(int _argc, char* _argv[]) {
         unsigned char* content;
         unsigned int size;
         int c;
+        unsigned char* bname;
 
         unsigned char filenameMangled[128];
         memset(filenameMangled, 0, 128);
-        for (j = 0, c = strlen(filename_input[i]); j < c; ++j) {
-            if (isalpha(filename_input[i][j])) {
-                filenameMangled[j] = toupper(filename_input[i][j]);
+        bname = basename(filename_input[i]);
+        for (j = 0, c = strlen(bname); j < c; ++j) {
+            if (isalpha(bname[j])) {
+                filenameMangled[j] = toupper(bname[j]);
             } else {
                 filenameMangled[j] = '_';
             }
