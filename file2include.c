@@ -254,6 +254,7 @@ int main(int _argc, char* _argv[]) {
 
     fprintf(fileOutputInclude, "\textern unsigned char * _includedFiles[%d];\n", filename_input_count);
 
+    fprintf(fileOutputInclude, "\t#define   INCLUDED_FILES_COUNT    %d\n", filename_input_count);
     fprintf(fileOutputInclude, "#endif\n");
 
     return 0;
