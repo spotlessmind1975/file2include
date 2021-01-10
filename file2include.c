@@ -228,6 +228,7 @@ int main(int _argc, char* _argv[]) {
         fprintf(fileOutputSource, "\t};\n\n");
 
         fprintf(fileOutputInclude, "\t#define FILE_%s\t%d\n", filenameMangled, i);
+        fprintf(fileOutputInclude, "\t#define FILE_%s_SIZE\t%d\n", filenameMangled, size);
 
         free(content);
 
