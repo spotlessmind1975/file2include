@@ -14,10 +14,14 @@
 #define ERL_OUT_OF_MEMORY               5
 #define ERL_CANNOT_CREATE_OUTPUT        6
 
+// Maximum number of files.
 #define FILE_COUNT                      255
 
 // Filenames to convert
 char* filename_input[FILE_COUNT];
+
+// Names to use instead of default one
+char* filename_replaced[FILE_COUNT];
 
 // Count of filename to convert
 unsigned int filename_input_count = 0;
@@ -49,6 +53,7 @@ void usage_and_exit(int _level, int _argc, char* _argv[]) {
     printf("\n");
     printf("[optional]\n");
     printf("\n");
+    printf(" -n <filename>      filename to use inside the include/source file\n");
     printf(" -v                 make execution verbose\n");
     printf(" ");
 
@@ -75,6 +80,10 @@ void parse_options(int _argc, char* _argv[]) {
             case 'i': // "-i <filename>"
                 filename_input[filename_input_count] = _argv[i + 1];
                 ++filename_input_count;
+                ++i;
+                break;
+            case 'n': // "-n <filename>"
+                filename_replaced[filename_input_count-1] = _argv[i + 1];
                 ++i;
                 break;
             case 'h': // "-h <filename>"
@@ -135,7 +144,12 @@ int main(int _argc, char* _argv[]) {
 
     if (verbose) {
         for (i = 0; i < filename_input_count; ++i) {
-            printf("Input filename          : %s\n", filename_input[i]);
+            if (filename_replaced[i]) {
+                printf("Input filename          : %s (replaced as %s)\n", filename_input[i], filename_replaced[i]);
+            }
+            else {
+                printf("Input filename          : %s\n", filename_input[i]);
+            }
         }
         printf("Output include filename : %s\n", filename_output_source);
         printf("Output source filename  : %s\n", filename_output_source);
@@ -163,9 +177,14 @@ int main(int _argc, char* _argv[]) {
 
         unsigned char filenameMangled[128];
         memset(filenameMangled, 0, 128);
-        bname = basename(filename_input[i]);
+
+        if (filename_replaced[i]) {
+            bname = basename(filename_replaced[i]);
+        } else {
+            bname = basename(filename_input[i]);
+        }
         for (j = 0, c = strlen(bname); j < c; ++j) {
-            if (isalpha(bname[j])) {
+            if (isalnum(bname[j])) {
                 filenameMangled[j] = toupper(bname[j]);
             } else {
                 filenameMangled[j] = '_';
